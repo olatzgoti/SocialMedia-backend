@@ -11,17 +11,25 @@ const CommentController = {
         try {
             const comment = await Comment.create({
                 ...req.body,
-                userId: req.body._id,
+                userId: req.body.userId,
+                postId: req.body.postId
             } 
             )
-            await User.findByIdAndUpdate(
+            /*await User.findByIdAndUpdate(
                 req.user._id,
                 { $push: {commentedPostsIds: req.body.postId }},
                 { new: true }
-            )
+            )*/
           
-            const post = await Post.findByIdAndUpdate( {_id: req.body.postId })
-        
+            const post = await Post.findByIdAndUpdate(
+                 req.body.postId,
+                 { $push: { commentsId: comment._id }},           
+                 )
+
+            const user = await User.findByIdAndUpdate(
+                req.body.userId,
+                { $push: { commentedPostsIds: req.body.postId }}
+            )
             if(!post){
                 res.status(404).send({message: "Post selected doesn't exist"})
             }
@@ -34,6 +42,28 @@ const CommentController = {
         }
 
     },
+        async update(req, res){
+        try {
+            const comment = await Comment.findByIdAndUpdate(req.params._id, req.body, {
+                new: true,
+            })
+            if(!comment){
+                return res.status(400).send({message: 'Comment not found'})
+            }
+            res.status(200).send(comment)
+        } 
+        catch (error) 
+        {
+            console.error(error)
+            res
+            .status(500)
+            .send({message:'There was a problem with the update of the comment'})
+            }
+    },
+
+
+
+
     async delete(req, res){
         try {
             

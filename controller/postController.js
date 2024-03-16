@@ -5,10 +5,9 @@ const Comment = require('../model/CommentModel')
 
 const PostController = {
 
-
     async getAll(req, res){
         try {
-            const { page=1, limit= 10, title, _id } = req.query
+           /* const { page=1, limit= 10, title, _id } = req.query
 
             const searchWords = {}
             if(title)
@@ -19,40 +18,49 @@ const PostController = {
                 {
                     searchWords._id = {$regex: new RegExp(_id, 'i')}
                 }
-
-            const posts = await Post.find({ ...searchWords })
-                .populate('likes.userId')
+    */
+            const posts = await Post.find()
+              /*  .populate('likes.userId')
                 .limit(limit)
                 .skip((page -1)* limit)
-
+*/
             res.send({ message:'Results:', posts})            
         }
-        
         catch (error) {
             console.error(error)
+        }
+    },
+    async getById(req, res){
+        try {
+            const post = await Post.findById(req.params._id)
+            res.send(post)
+        } catch (error) {
+            res.send(error)
         }
     },
 
     async create(req, res, next){ 
      try {
+         console.log(req.body)
          const post = await Post.create({
             ...req.body,
-            userId: req.user._id
+            userId: req.body.userId
         })
-        await User.findByIdAndUpdate(
-            req.user._id,
-            { $push: { publishedPostsIds: post._id }},
-            { new: true }
-         ),
+
+        const user = await User.findByIdAndUpdate(
+            req.body.userId,
+            {$push: { publishedPostsIds: post._id }}
+        )
+
+   
         res.send({ message: 'Post created' , post })
         
      } 
     catch (error) {
         console.error(error)
-        error.origin('user')
+      //error.origin('user')
         next(error)
-    }
-    },
+    }},
 
     async update(req, res){
         try {
@@ -62,8 +70,12 @@ const PostController = {
             if(!post){
                 return res.status(400).send({message: 'Post not found'})
             }
-            res.status(200).send(post)
 
+            const comment = await Comment.findByIdAndUpdate(...req.body)
+
+
+
+            res.status(200).send(post)
         } 
         catch (error) 
         {
@@ -79,7 +91,8 @@ const PostController = {
             const post = await Post.findOne({
                 _id: req.params._id,
                 'likes.like': true,
-                'likes.userId': req.user._id,
+                'likes.userId': req.body.userId,
+                //'likes.userId': req.user._id,
             })
             if(post){
                 return res
@@ -88,15 +101,24 @@ const PostController = {
             }
             const updatedPost = await Post.findByIdAndUpdate(
                 req.params._id,
-                { $push: { likes: { like: true, userId: req.user._id } } },
+                {$push: { likes: { like: true, userId: req.body.userId }}},
+                //  { $push: { likes: { like: true, userId: req.user._id } } },
                 { new: true }
             )
             if(!updatedPost)
             {
                 return res.status(400).send({ message: 'Post not found'})
             }
-            res.status(200).send({message: 'You hace liked the post', updatedPost})
-           
+            const user= await User.findByIdAndUpdate(
+                req.body.userId,
+                //req.user._id,
+                { $push: { likedPosts: req.params._id }},
+                { new:true }
+            )
+            if(!user) return 'Not user'
+
+        res.status(200).send({message: 'You liked the post', updatedPost})
+        
         } 
         
         catch (error) {

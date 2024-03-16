@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-//require('dotenv').config()
-require("dotenv").config({ path: "./config/.env" });
+require('dotenv').config()
+//require("dotenv").config({ path: "./config/.env" });
 
 // const { MONGO_URI } = require('./keys')
 

@@ -1,4 +1,4 @@
-const handleValidationError = (err, res) => {
+/*const handleValidationError = (err, res) => {
   let errors = Object.values(err.errors).map((el) => el.message);
   if (errors.length > 1) {
     let chain = "";
@@ -23,3 +23,4 @@ const typeError = (err, req, res, next) => {
 };
 
 module.exports = { typeError };
+*/

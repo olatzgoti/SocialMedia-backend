@@ -19,6 +19,8 @@ const userController = {
     }
   },
 
+
+
   async login(req, res) {
     try {
       const user = await userModel.findOne({
@@ -32,6 +34,7 @@ const userController = {
         user.tokens.shift();
       }
       user.tokens.push(token);
+      
       await user.save();
       res.send({ message: "Bienvenida " + user.name, token, user });
     } catch (e) {
