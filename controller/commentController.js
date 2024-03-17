@@ -5,6 +5,18 @@ const Post = require('../model/PostModel')
 
 const CommentController = {
 
+    async getAll(req, res) {
+        try {
+            const comment = await Comment.find()
+            
+            res.send({message:'Results: ', comment })
+      
+        }        
+        catch (error) {
+          
+            res.send(error)
+        }
+    },
 
     async create(req, res, next){
 
