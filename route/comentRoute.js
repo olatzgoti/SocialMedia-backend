@@ -5,7 +5,7 @@ const CommentController = require('../controller/commentController')
 
 
 
-router.get('/getAll', CommentController.getAll)
+router.get('/getByPostId/:postId', CommentController.getByPostId)
 router.post('/create', CommentController.create)
 
 router.put('/update/id/:_id', CommentController.update)

@@ -39,21 +39,25 @@ const PostController = {
         }
     },
 
+
+
+
     async create(req, res, next){ 
      try {
-         console.log(req.body)
+
+
          const post = await Post.create({
             ...req.body,
-            userId: req.body.userId
+            userId: req.user._id
         })
 
         const user = await User.findByIdAndUpdate(
-            req.body.userId,
-            {$push: { publishedPostsIds: post._id }}
+            req.user._id,
+            { $push: { publishedPostsIds: post._id }},
+            { new: true }
         )
 
-   
-        res.send({ message: 'Post created' , post })
+        res.send( post )
         
      } 
     catch (error) {
@@ -70,11 +74,7 @@ const PostController = {
             if(!post){
                 return res.status(400).send({message: 'Post not found'})
             }
-
             const comment = await Comment.findByIdAndUpdate(...req.body)
-
-
-
             res.status(200).send(post)
         } 
         catch (error) 
@@ -91,8 +91,8 @@ const PostController = {
             const post = await Post.findOne({
                 _id: req.params._id,
                 'likes.like': true,
-                'likes.userId': req.body.userId,
-                //'likes.userId': req.user._id,
+                'likes.userId': req.user._id,
+                //'likes.userId': req.body.userId,
             })
             if(post){
                 return res
@@ -173,7 +173,7 @@ const PostController = {
         const post = await Post.findByIdAndDelete(req.params._id, { new: true });
         res
             .status(200)
-            .send({ message: "You have succesfully deleter the post", post });
+            .send({ message: "You have succesfully delete the post", post });
     } 
     catch (error) {
     console.error(error);

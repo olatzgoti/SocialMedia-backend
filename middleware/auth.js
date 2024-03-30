@@ -3,14 +3,14 @@ const Post = require("../model/PostModel");
 const Comment = require("../model/CommentModel");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-//const jwt_secret = process.env.JWT_SECRET;
+const jwt_secret = process.env.JWT_SECRET;
 //console.log(jwt_secret)
 
 const authentication = async (req, res, next) => {
   try {
     const token = req.headers.authorization
     //console.log(token)
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = await jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({ _id: payload._id, tokens: token });
     if (!user) {
       return res.status(404).send({ message: "Not authorized" });

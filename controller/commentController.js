@@ -5,15 +5,23 @@ const Post = require('../model/PostModel')
 
 const CommentController = {
 
-    async getAll(req, res) {
+    async getByPostId(req, res) {
         try {
-            const comment = await Comment.find()
-            
+        
+           const { postId } = req.query.postId
+           const searchCond =  {} 
+           console.log(postId)
+           console.log(searchCond)
+           if(postId) 
+           { 
+           searchCond.postId = postId 
+           }
+           
+            const comment = await Comment.find({
+            	...searchCond })
             res.send({message:'Results: ', comment })
-      
         }        
-        catch (error) {
-          
+        catch (error) {          
             res.send(error)
         }
     },
