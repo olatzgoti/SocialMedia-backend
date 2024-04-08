@@ -2,13 +2,6 @@
 
 
 
-<h2 align="center"><samp>Hunta</samp></h2>
-  <p align="center"><samp>
-    Backend Project with Node, MongoDB & JS express.
-    <br /> 
-    ⭐
-    <a href="https://github.com/VeroPolegre/Aether-E-Commerce_Backend_Project
-/issues">Request a feature!</a>
     ⭐
     <br />
     
